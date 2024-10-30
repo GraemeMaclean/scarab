@@ -33,6 +33,7 @@
 #include "globals/global_types.h"
 #include "globals/global_vars.h"
 #include "globals/utils.h"
+#include "libs/hash_lib.h"//mqi6
 
 #include "bp/bp.h"
 #include "dcache_stage.h"
@@ -431,6 +432,37 @@ void update_dcache_stage(Stage_Data* src_sd) {
             STAT_EVENT(op->proc_id, DCACHE_MISS_LD_ONPATH);
             op->oracle_info.dcmiss = TRUE;
             STAT_EVENT(op->proc_id, DCACHE_MISS_LD);
+
+            /* chages made by Ming and Graeme */
+            void* data = hash_table_access(&dc->dcache.access_history, (int64)line_addr);
+            if (data == NULL) {
+                // **Compulsory Miss**
+                STAT_EVENT(op->proc_id, DCACHE_COMPULSORY_MISSES);
+
+                // Add the address to the hash table
+                Flag new_entry;
+                hash_table_access_create(&dc->dcache.access_history, (int64)line_addr, &new_entry);
+            } else {
+                // **Not a Compulsory Miss**
+
+                // Check if the set is full
+                uns invalid_entries = cache_get_invalid_line_count(&dc->dcache, line_addr);
+                Flag set_full = (invalid_entries == 0);
+
+                // Check if the cache is full
+                Flag cache_full = cache_is_full(&dc->dcache);
+
+                if (cache_full) {
+                    // **Capacity Miss**
+                    STAT_EVENT(op->proc_id, DCACHE_CAPACITY_MISSES);
+                } else if (set_full) {
+                    // **Conflict Miss**
+                    STAT_EVENT(op->proc_id, DCACHE_CONFLICT_MISSES);
+                } else {
+                    // Neither cache nor set is full; treat as capacity miss
+                    STAT_EVENT(op->proc_id, DCACHE_CAPACITY_MISSES);
+                }
+            }
           } else {
             wrongpath_dcmiss = TRUE;
             STAT_EVENT(op->proc_id, DCACHE_MISS_OFFPATH);
@@ -486,6 +518,37 @@ void update_dcache_stage(Stage_Data* src_sd) {
             STAT_EVENT(op->proc_id, DCACHE_MISS_LD_ONPATH);
             op->oracle_info.dcmiss = TRUE;
             STAT_EVENT(op->proc_id, DCACHE_MISS_LD);
+
+            /* chages made by Ming and Graeme */
+            void* data = hash_table_access(&dc->dcache.access_history, (int64)line_addr);
+            if (data == NULL) {
+                // **Compulsory Miss**
+                STAT_EVENT(op->proc_id, DCACHE_COMPULSORY_MISSES);
+
+                // Add the address to the hash table
+                Flag new_entry;
+                hash_table_access_create(&dc->dcache.access_history, (int64)line_addr, &new_entry);
+            } else {
+                // **Not a Compulsory Miss**
+
+                // Check if the set is full
+                uns invalid_entries = cache_get_invalid_line_count(&dc->dcache, line_addr);
+                Flag set_full = (invalid_entries == 0);
+
+                // Check if the cache is full
+                Flag cache_full = cache_is_full(&dc->dcache);
+
+                if (cache_full) {
+                    // **Capacity Miss**
+                    STAT_EVENT(op->proc_id, DCACHE_CAPACITY_MISSES);
+                } else if (set_full) {
+                    // **Conflict Miss**
+                    STAT_EVENT(op->proc_id, DCACHE_CONFLICT_MISSES);
+                } else {
+                    // Neither cache nor set is full; treat as capacity miss
+                    STAT_EVENT(op->proc_id, DCACHE_CAPACITY_MISSES);
+                }
+            }
           } else {
             wrongpath_dcmiss = TRUE;
             STAT_EVENT(op->proc_id, DCACHE_MISS_OFFPATH);
