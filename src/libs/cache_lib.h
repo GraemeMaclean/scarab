@@ -31,6 +31,7 @@
 
 #include "globals/global_defs.h"
 #include "libs/list_lib.h"
+#include "libs/hash_lib.h"
 
 
 /**************************************************************************************/
@@ -121,6 +122,10 @@ typedef struct Cache_struct {
   Addr tag_mask;    /* mask used to get the tag after shifting */
   Addr offset_mask; /* mask used to get the line offset */
 
+  /* changes made by Ming and Graeme */
+  Hash_Table access_history;//mqi6
+  uns total_valid_cache_lines;//mqi6
+
   uns*          repl_ctrs; /* replacement info */
   Cache_Entry** entries;   /* A dynamically allocated array of all
                               of the cache entries. The array is
@@ -193,6 +198,7 @@ void* get_next_repl_line(Cache*, uns8, Addr, Addr*, Flag*);
 void* get_next_valid_repl_line(Cache* cache, uns8 proc_id, Addr addr);
 uns   ext_cache_index(Cache*, Addr, Addr*, Addr*);
 Addr  get_cache_line_addr(Cache*, Addr);
+Flag cache_is_full(Cache* cache);//mqi6
 uns   cache_get_invalid_line_count(Cache* cache, Addr addr);
 void  update_repl_resteer_policy(Cache*, Addr);
 
