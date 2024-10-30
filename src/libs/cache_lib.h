@@ -31,7 +31,7 @@
 
 #include "globals/global_defs.h"
 #include "libs/list_lib.h"
-#include "libs/hash_lib.h"
+#include "libs/hash_lib.h"//mqi6
 
 
 /**************************************************************************************/
@@ -122,7 +122,7 @@ typedef struct Cache_struct {
   Addr tag_mask;    /* mask used to get the tag after shifting */
   Addr offset_mask; /* mask used to get the line offset */
 
-  /* changes made by Ming and Graeme */
+    /* chages made by Ming and Graeme */
   Hash_Table access_history;//mqi6
   uns total_valid_cache_lines;//mqi6
 

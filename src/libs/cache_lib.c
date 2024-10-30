@@ -105,10 +105,6 @@ void init_cache(Cache* cache, const char* name, uns cache_size, uns assoc,
     return;
   }
 
-    /* changes made by Ming and Graeme */
-    init_hash_table(&cache->access_history, "Cache Access History", 1024, sizeof(uns64));//mqi6
-    //cache->total_valid_cache_lines = 0;//mqi6
-
   /* set the basic parameters */
   strncpy(cache->name, name, MAX_STR_LENGTH);
   cache->data_size   = data_size;
@@ -276,7 +272,7 @@ void* cache_access(Cache* cache, Addr addr, Addr* line_addr, Flag update_repl) {
   return NULL;
 }
 
- 
+
 /**************************************************************************************/
 /* cache_insert: returns a pointer to the data section of the new cache line.
    Sets line_addr to the address of the first block of the new line.  Sets
@@ -777,22 +773,19 @@ uns cache_get_invalid_line_count(Cache* cache, Addr addr) {
   return invalid_entries;
 }
 
-/**************************************************************************************/
-/* cache_is_full: Return the whether there are any invalid entries                    */
-
-Flag cache_is_full(Cache* cache){
-  for (uns set = 0; set < cache->num_sets; set++){
-    for (uns way = 0;way < cache->assoc; way++){
-      Cache_Entry* entry = &cache->entries[set][way];
-
-      if (!entry->valid){
-        // Found an invalid entry; cache is not full
-        return FALSE;
-      }
+    /* chages made by Ming and Graeme */
+Flag cache_is_full(Cache* cache) {
+    for (uns set = 0; set < cache->num_sets; set++) {
+        for (uns way = 0; way < cache->assoc; way++) {
+            Cache_Entry* entry = &cache->entries[set][way];
+            if (!entry->valid) {
+                // Found an invalid entry; cache is not full
+                return FALSE;
+            }
+        }
     }
-  }
-  // All entries are valid; cache is full
-  return TRUE;
+    // All entries are valid; cache is full
+    return TRUE;
 }
 
 
