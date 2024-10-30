@@ -105,6 +105,10 @@ void init_cache(Cache* cache, const char* name, uns cache_size, uns assoc,
     return;
   }
 
+  /* changes made by Ming and Graeme*/
+  init_hash_table(&cache->access_history, "Cache Access History", 1024, sizeof(uns64));
+  // cache->total_valid_cache_lines = 0;//mqi6
+
   /* set the basic parameters */
   strncpy(cache->name, name, MAX_STR_LENGTH);
   cache->data_size   = data_size;
