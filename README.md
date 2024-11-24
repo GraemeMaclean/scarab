@@ -1,14 +1,10 @@
-# Our changes to Scarab
+# Our changes to Scarab to implement the Two-Level Adaptive Branch Predictor by Yeh and Patt
 
-src/memory/memory.stat.def
->Lines 348-353
+src/bp/bp_table.def
+>Lines 
 
-src/libs/cache_lib.c
->Lines 42, 108-111, 780-795
+src/bp/bp.stat.def
+>Lines
 
-src/libs/cache_lib.h
->Lines 34, 125-128, 201
 
-src/dcache_stage.c
->Lines 36, 435-465, 521-551
 
