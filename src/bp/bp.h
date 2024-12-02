@@ -141,6 +141,7 @@ typedef struct Bp_Data_struct {
 
   uns32 global_hist;
   uns32 global_BHR;//mqi6
+  Cache pht;//gm
   Cache btb;
 
   struct {

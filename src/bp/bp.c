@@ -277,6 +277,10 @@ void init_bp_data(uns8 proc_id, Bp_Data* bp_data) {
     bp_data->late_bp = NULL;
   }
 
+  //gm
+  /* init pht structure */
+  init_cache(&bp_data->pht, "PHT", (4 * 1024), sizeof(uns), 1,
+                 sizeof(uns), REPL_TRUE_LRU);
 
   /* init btb structure */
   bp_data->bp_btb = &bp_btb_table[BTB_MECH];
