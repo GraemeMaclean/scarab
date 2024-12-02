@@ -500,7 +500,7 @@ Addr bp_predict_op(Bp_Data* bp_data, Op* op, uns br_num, Addr fetch_addr) {
         op->oracle_info.no_target = FALSE;
       } else {
         ASSERT(op->proc_id, !PERFECT_NT_BTB); //currently not supported
-        op->oracle_info.pred = bp_data->bp->pred_func(op);
+        op->oracle_info.pred = (((bp_data->global_BHR >> 28) & 0xF) >= 8) ? 1 : 0;//mqi6
         op->oracle_info.pred_orig = op->oracle_info.pred;
         if(USE_LATE_BP) {
           op->oracle_info.late_pred = bp_data->late_bp->pred_func(op);
@@ -542,6 +542,7 @@ Addr bp_predict_op(Bp_Data* bp_data, Op* op, uns br_num, Addr fetch_addr) {
           ASSERT(0, pred_target == pc_plus_offset);
 
         STAT_EVENT(op->proc_id, CBR_RECOVER_MISPREDICT + op->off_path * NUM_BR_STATS);
+        bp_data->global_BHR = (bp_data->global_BHR >> 1);//mqi6
       }
       // Although the btb hits and cbr is correctly predicted, target address may be wrong (aliasing or jitted code)
       else if (btb_target && pred_target != op->oracle_info.npc) {
@@ -549,6 +550,7 @@ Addr bp_predict_op(Bp_Data* bp_data, Op* op, uns br_num, Addr fetch_addr) {
           op->oracle_info.recover_at_exec = FALSE;
           op->oracle_info.pred_npc = pred_target;
           STAT_EVENT(op->proc_id, CBR_RECOVER_MISFETCH + op->off_path * NUM_BR_STATS);
+          bp_data->global_BHR = (bp_data->global_BHR >> 1);//mqi6
       }
       // Correctly predicted
       else if (btb_target) {
@@ -556,6 +558,7 @@ Addr bp_predict_op(Bp_Data* bp_data, Op* op, uns br_num, Addr fetch_addr) {
         op->oracle_info.recover_at_exec = FALSE;
         op->oracle_info.pred_npc = pred_target;
         STAT_EVENT(op->proc_id, CBR_CORRECT + op->off_path * NUM_BR_STATS);
+        bp_data->global_BHR= (bp_data->global_BHR >> 1) | (0x1 << 31); //mqi6
       }
       // If BTB missed, the branch will be assumed not taken at fetch. At decode we detect
       // the branch and will predict. There are 4 outcomes:
@@ -566,6 +569,7 @@ Addr bp_predict_op(Bp_Data* bp_data, Op* op, uns br_num, Addr fetch_addr) {
         op->oracle_info.pred = NOT_TAKEN;
         op->oracle_info.pred_npc = pc_plus_offset;
         STAT_EVENT(op->proc_id, CBR_RECOVER_BTB_MISS_T_T + op->off_path * NUM_BR_STATS);
+        bp_data->global_BHR = (bp_data->global_BHR >> 1);//mqi6
 	      if (FDIP_BP_CONFIDENCE)
           fdip_inc_cnt_btb_miss(op->proc_id);
       }
@@ -578,6 +582,7 @@ Addr bp_predict_op(Bp_Data* bp_data, Op* op, uns br_num, Addr fetch_addr) {
         op->oracle_info.pred = NOT_TAKEN;
         op->oracle_info.pred_npc = pred_target; //Not accurate. At fetch it would execute pc_plus_offset, at decode would resteer frontend to pred_taken
         STAT_EVENT(op->proc_id, CBR_RECOVER_BTB_MISS_T_NT + op->off_path * NUM_BR_STATS);
+        bp_data->global_BHR = (bp_data->global_BHR >> 1);//mqi6
 	      if (FDIP_BP_CONFIDENCE)
           fdip_inc_cnt_btb_miss(op->proc_id);
       }
@@ -588,6 +593,7 @@ Addr bp_predict_op(Bp_Data* bp_data, Op* op, uns br_num, Addr fetch_addr) {
         op->oracle_info.pred = NOT_TAKEN;
         op->oracle_info.pred_npc = pc_plus_offset;
         STAT_EVENT(op->proc_id, CBR_RECOVER_BTB_MISS_NT_T + op->off_path * NUM_BR_STATS);
+        bp_data->global_BHR = (bp_data->global_BHR >> 1);//mqi6
 	      if (FDIP_BP_CONFIDENCE)
           fdip_inc_cnt_btb_miss(op->proc_id);
       }
@@ -598,6 +604,7 @@ Addr bp_predict_op(Bp_Data* bp_data, Op* op, uns br_num, Addr fetch_addr) {
         op->oracle_info.pred = NOT_TAKEN;
         op->oracle_info.pred_npc = pc_plus_offset;
         STAT_EVENT(op->proc_id, CBR_CORRECT_BTB_MISS_NT_NT + op->off_path * NUM_BR_STATS);
+        bp_data->global_BHR = (bp_data->global_BHR >> 1);//mqi6
       }
       else {
         //We should have matched all cases by here
