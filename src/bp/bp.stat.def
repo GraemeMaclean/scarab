@@ -63,6 +63,8 @@ DEF_STAT(  BTB_OFF_PATH_HIT         , DIST    , NO_RATIO       )
 DEF_STAT(  BTB_ON_PATH_WRITE        , DIST    , NO_RATIO       )
 DEF_STAT(  BTB_OFF_PATH_WRITE       , DIST    , NO_RATIO       )
 
+DEF_STAT(  BP_ON_PATH_PREDICT       , COUNT    , NO_RATIO       )
+
 DEF_STAT(  BP_ON_PATH_CORRECT       , DIST    , NO_RATIO       )
 DEF_STAT(  BP_ON_PATH_MISPREDICT    , COUNT   , NO_RATIO       )
 DEF_STAT(  BP_ON_PATH_MISFETCH      , DIST    , NO_RATIO       )
@@ -577,8 +579,6 @@ DEF_STAT(  RESTEER_NO_TARGET_CF_ICALL,          COUNT, NO_RATIO  )
 DEF_STAT(  RESTEER_NO_TARGET_CF_ICO,            COUNT, NO_RATIO  )
 DEF_STAT(  RESTEER_NO_TARGET_CF_RET,            DIST , NO_RATIO  )
 
-// branch prediction characteristics about correct/incorrect prediction of different types of branches
-// conditional branching
 DEF_STAT(  CBR_CORRECT,                      DIST, NO_RATIO  )
 DEF_STAT(  CBR_CORRECT_BTB_MISS_NT_NT,       COUNT, NO_RATIO  )
 DEF_STAT(  CBR_RECOVER_MISPREDICT,           COUNT, NO_RATIO  )
@@ -590,7 +590,6 @@ DEF_STAT(  CBR_RECOVER_BTB_MISS_NT_T,        DIST, NO_RATIO  )
 DEF_STAT(  BR_CORRECT,                       DIST, NO_RATIO  )
 DEF_STAT(  BR_RECOVER,                       DIST, NO_RATIO  )
 
-// call instructions or subroutines
 DEF_STAT(  ICALL_CORRECT_IBTB,               DIST, NO_RATIO  )
 DEF_STAT(  ICALL_CORRECT_BTB,                COUNT, NO_RATIO  )
 DEF_STAT(  ICALL_RECOVER_IBTB_MISFETCH,      COUNT, NO_RATIO  )
@@ -606,7 +605,6 @@ DEF_STAT(  IBR_RECOVER_XBTB_MISS,            DIST, NO_RATIO  )
 DEF_STAT(  ICO_CORRECT,                      DIST, NO_RATIO  )
 DEF_STAT(  ICO_RECOVER,                      DIST, NO_RATIO  )
 
-// return instructions
 DEF_STAT(  RET_CORRECT,                      DIST, NO_RATIO  )
 DEF_STAT(  RET_RECOVER,                      COUNT, NO_RATIO  )
 DEF_STAT(  RET_RECOVER_UFLOW,                DIST, NO_RATIO  )
@@ -614,14 +612,12 @@ DEF_STAT(  RET_RECOVER_UFLOW,                DIST, NO_RATIO  )
 DEF_STAT(  CALL_CORRECT,                     DIST, NO_RATIO  )
 DEF_STAT(  CALL_RECOVER,                     DIST, NO_RATIO  )
 
-// branch target buffer
 DEF_STAT(  BTB_CORRECT,                      DIST, NO_RATIO  )
 DEF_STAT(  BTB_INCORRECT_BUT_TARGET_CORRECT, COUNT, NO_RATIO  )
 DEF_STAT(  BTB_INCORRECT,                    DIST, NO_RATIO  )
 
 DEF_STAT(  IBTB_CORRECT,                     DIST, NO_RATIO  )
 DEF_STAT(  IBTB_INCORRECT,                   DIST, NO_RATIO  )
-// end of section
 
 DEF_STAT(  CBR_CORRECT_OFF_PATH,                      DIST, NO_RATIO  )
 DEF_STAT(  CBR_CORRECT_BTB_MISS_NT_NT_OFF_PATH,       COUNT, NO_RATIO  )
