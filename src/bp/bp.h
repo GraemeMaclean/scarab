@@ -33,6 +33,7 @@
 #include "libs/cache_lib.h"
 #include "libs/hash_lib.h"
 #include "op.h"
+#include <stdint.h>
 
 /**************************************************************************************/
 // Branch prediction recovery information
@@ -129,6 +130,16 @@ typedef struct Perceptron_struct {
   int32* weights;
 } Perceptron;
 
+//mqi6
+#define BHR_BITS 8          // Number of bits used from the BHR to index the PHT
+#define PHT_SIZE (1 << BHR_BITS)  // Size of the PHT (e.g., 256 entries for 8 bits)
+#define HISTORY_LENGTH 4     // Number of previous outcomes stored per pattern
+
+typedef struct {
+    uint8_t history[HISTORY_LENGTH]; // Circular buffer to store last k outcomes
+    int index;                       // Current index in the history buffer
+} PHTEntry;
+
 typedef struct Bp_Data_struct {
   uns proc_id;
   /* predictor data */
@@ -140,6 +151,8 @@ typedef struct Bp_Data_struct {
   struct Br_Conf_struct* br_conf;
 
   uns32 global_hist;
+  uns32 global_BHR;//mqi6
+  PHTEntry pht[PHT_SIZE]; //mqi6
   Cache btb;
 
   struct {
@@ -289,6 +302,10 @@ void bp_recover_op(Bp_Data*, Cf_Type, Recovery_Info*);
 void inc_bstat_fetched(Op* op);
 void inc_bstat_miss(Op* op);
 
+//mqi6
+void bp_init(Bp_Data* bp_data);
+int bp_predict(Bp_Data* bp_data);
+void bp_update(Bp_Data* bp_data, int actual_outcome);
 /**************************************************************************************/
 
 #endif /* #ifndef __BP_H__ */
